@@ -1,6 +1,6 @@
 #!/bin/bash
 # Get Beyond Video — خطوات المونتاج (بيئة سحابية لينكس). كل خطوة تنشغل لحالها:
-#   bash run.sh setup              ← أدوات + موديلات + محرّك ماجد (مرة بالجلسة)
+#   bash run.sh setup              ← أدوات + موديلات + خطوط (مرة بالجلسة)
 #   bash run.sh init <video.mp4>   ← مجلد شغل + فريمات + صوت
 #   bash run.sh palette [اسم]     ← لون الفيديو: يتبدّل تلقائياً عن آخر فيديو (الأسلوب نفسه)
 #   bash run.sh transcribe         ← تفريغ بقطع 10 و15 ث (اقرأ t10.log و t15.log وصحّح بنفسك)
@@ -11,8 +11,10 @@
 set -e
 KIT="$(cd "$(dirname "$0")" && pwd)"
 GB_HOME="${GB_HOME:-$HOME}"; WORK="${WORK:-$GB_HOME/gb-video/work}"
+# مؤقت (لين الجلسة 2): خطوة encode بس تستعمل سكربتات الصوت والترجمة من ماجد. الرسم كله صار من engine/.
 MAJED=$GB_HOME/video-ad-editor/video-ad-editor; MAJED_COMMIT=886cae69add821367f6c7bb9d9115a34e2427b21
-M=$GB_HOME/models; T=$GB_HOME/gbtools
+M=$GB_HOME/models; T=$GB_HOME/gbtools; FONTS=$GB_HOME/fonts
+GF=https://raw.githubusercontent.com/google/fonts/main/ofl
 export PUPPETEER_PATH=$T/node_modules/puppeteer-core
 export CHROME_PATH="${CHROME_PATH:-$(ls -d /opt/pw-browsers/chromium-*/chrome-linux64/chrome 2>/dev/null | head -1)}"
 S=$MAJED/scripts
@@ -21,6 +23,10 @@ setup)
   [ -d $GB_HOME/video-ad-editor ] || { git clone https://github.com/majedphotos/video-ad-editor.git $GB_HOME/video-ad-editor; git -C $GB_HOME/video-ad-editor checkout -q $MAJED_COMMIT; }
   mkdir -p $M $T; cd $T; [ -f package.json ] || npm init -y >/dev/null; npm i -s puppeteer-core@23.11.1
   pip install -q --break-system-packages sherpa-onnx soundfile onnxruntime opencv-python-headless pillow
+  # الخطوط (SIL OFL) من مستودع Google Fonts
+  mkdir -p $FONTS; for w in Regular Medium Bold ExtraBold Black; do [ -s $FONTS/Tajawal-$w.ttf ] || curl -sfL -o $FONTS/Tajawal-$w.ttf $GF/tajawal/Tajawal-$w.ttf; done
+  [ -s $FONTS/Inter-VF.ttf ] || curl -sfL -o $FONTS/Inter-VF.ttf "$GF/inter/Inter%5Bopsz,wght%5D.ttf"
+  [ -s $FONTS/Cairo-VF.ttf ] || curl -sfL -o $FONTS/Cairo-VF.ttf "$GF/cairo/Cairo%5Bslnt,wght%5D.ttf"
   # huggingface محجوب بالسحابة — الموديلات من GitHub releases
   [ -d $M/sherpa-onnx-whisper-turbo ] || (cd $M && curl -sL https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-turbo.tar.bz2 | tar xj)
   [ -f $M/silero_vad.onnx ] || curl -sL -o $M/silero_vad.onnx https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx
@@ -29,8 +35,7 @@ setup)
 init)
   mkdir -p $WORK/vfr $WORK/bt/person; cd $WORK
   ln -sf "$(realpath "$2")" src.mp4
-  cp $KIT/kit/compose.html $KIT/kit/theme.json $KIT/kit/cover.html . ; cp $MAJED/motion/fonts/*.ttf .
-  python3 -c "from PIL import Image; Image.new('RGBA',(4,4),(0,0,0,0)).save('logo.png')"
+  cp $KIT/engine/engine.html $KIT/engine/engine.js $KIT/kit/theme.json $KIT/kit/cover.html . ; cp $FONTS/*.ttf .
   D=$(ffprobe -v error -show_entries format=duration -of csv=p=0 src.mp4)
   python3 -c "import json;d=round($D,3);json.dump({'keep':[[0,d]],'total':d,'src_dur':d,'tail':0},open('cut.json','w'))"
   ffmpeg -v error -i src.mp4 -vf fps=30 -q:v 3 -y vfr/%05d.jpg
@@ -57,11 +62,12 @@ transcribe)
 masks)
   cd $WORK; python3 $KIT/tools/u2mask.py vfr bt/person cut "$2" > mask.log 2>&1; ls bt/person | wc -l;;
 preview)
-  cd $WORK; shift; node $S/04_render_frames.js . preview "$@" | grep -v "^معاينة" || true; bash $S/07_contact_sheet.sh . sheet.jpg "${@:1:6}";;
+  cd $WORK; shift; cp $KIT/engine/engine.js .; node $KIT/engine/render.js . preview "$@" | grep -v "^معاينة" || true; python3 $KIT/engine/sheet.py . sheet.jpg "$@";;
 render)
   cd $WORK; rm -rf out; mkdir out; D=$(python3 -c "import json;print(json.load(open('caps.json'))['total'])"); H=$(python3 -c "print(round($D/2,2))")
-  node $S/04_render_frames.js . range 0 $H > r1.log 2>&1 & node $S/04_render_frames.js . range $H $D > r2.log 2>&1 & wait
-  grep -h "compose\]" r1.log r2.log | sort -u || true; echo "فريمات: $(ls out | grep -c jpg)";;
+  cp $KIT/engine/engine.js .
+  node $KIT/engine/render.js . range 0 $H > r1.log 2>&1 & node $KIT/engine/render.js . range $H $D > r2.log 2>&1 & wait
+  grep -h "engine\]" r1.log r2.log | sort -u || true; echo "فريمات: $(ls out | grep -c jpg)";;
 encode)
   cd $WORK; D=$(python3 -c "import json;print(json.load(open('caps.json'))['total'])"); F=$(python3 -c "print(round($D-0.45,3))")
   python3 $S/05_sfx.py .
