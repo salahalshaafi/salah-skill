@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""مهارة صلاح — Build caps.json (Majed engine format) from the corrected transcript.
+"""مهارة صلاح — Build caps.json (Salah Engine format) from the corrected transcript.
 Words are timed inside each VAD speech segment, proportional to length,
 consuming only frames where the voice is active (RMS envelope)."""
 import json, numpy as np, soundfile as sf

@@ -134,88 +134,124 @@
     });
   }
 
-  /* ── الكابشن: كرت فاتح في الثلث السفلي ───────────────────── */
-  const CAP = { size: 66, min: 44, maxW: 930, padX: 42, padY: 24, gap: .30, radius: 18 };
+  /* ── الكابشن ─────────────────────────────────────────────────
+     capStyle 'card'   (مهارة صلاح): كرت فاتح في الثلث السفلي، الكلمة اللي تنطق بلون التمييز، المميزة بخلفية ملوّنة.
+     capStyle 'shadow' (Get Beyond): نص أبيض عريض بإطار غامق وظل فوق الراس، المميزة تتلوّن لحظة نطقها.
+     capBottom = الحافة السفلية للكابشن. الجملة اللي ما تساعش سطر = صفحات متوازنة بالتتابع (سطر واحد دايمًا). */
+  const STYLES = {
+    /* size/min: سطر واحد يصغر لين min · لو ما ساعش: صفحات بخط pageSize (يصغر لين pageMin) */
+    card:   { size: 66, min: 54, pageSize: 60, pageMin: 46, maxW: 930, wN: 700, wH: 800, padX: 42, padY: 24, gap: .30, hotPad: .36 },
+    shadow: { size: 84, min: 60, pageSize: 66, pageMin: 52, maxW: 940, wN: 900, wH: 900, padX: 0, padY: 10, gap: .34, hotPad: 0 }
+  };
+  const capStyle = () => (THEME_RAW.capStyle === 'card' || !THEME_RAW.capStyle) ? 'card' : 'shadow';
 
   function wordFont(word, size, weight) {
     const latinOnly = LATIN.test(word) && !ARABIC.test(word);
-    return { font: `${weight} ${latinOnly ? Math.round(size * .92) : size}px ${latinOnly ? 'Inter' : (THEME_RAW.font || 'Tajawal')}`, dir: latinOnly ? 'ltr' : 'rtl' };
+    return { font: `${weight} ${latinOnly ? Math.round(size * .9) : size}px ${latinOnly ? 'Inter' : (THEME_RAW.font || 'Tajawal')}`, dir: latinOnly ? 'ltr' : 'rtl' };
   }
 
   function layoutCard(card) {
     if (card._lay) return card._lay;
-    let size = CAP.size, lines;
+    const S = STYLES[capStyle()];
     const measure = sz => card.w.map(w => {
-      const f = wordFont(w.t, sz, w.hot ? 800 : 700); X.font = f.font;
-      return { w: X.measureText(w.t).width + (w.hot ? sz * .36 : 0), f };
+      const f = wordFont(w.t, sz, w.hot ? S.wH : S.wN); X.font = f.font;
+      return { w: X.measureText(w.t).width + (w.hot ? sz * S.hotPad : 0), f };
     });
-    let m = measure(size);
-    const total = ms => ms.reduce((a, b) => a + b.w, 0) + (ms.length - 1) * size * CAP.gap;
-    while (total(m) > CAP.maxW && size > CAP.min) { size -= 2; m = measure(size); }
-    if (total(m) <= CAP.maxW) lines = [m.map((x, i) => i)];
-    else {   /* احتياط فقط: سطرين لو الجملة طويلة جدًا */
-      warn(`كابشن طويل جدًا (كرت يبدأ ${card.s}) — قسّمه بـ | في build_caps.py`);
-      lines = [[]]; let acc = 0;
-      m.forEach((x, i) => { const add = x.w + (lines[lines.length - 1].length ? size * CAP.gap : 0); if (acc + add > CAP.maxW && lines[lines.length - 1].length) { lines.push([]); acc = 0; } lines[lines.length - 1].push(i); acc += x.w + (acc ? size * CAP.gap : 0); });
+    const span = (ms, sz, ids) => ids.reduce((a, i) => a + ms[i].w, 0) + (ids.length - 1) * sz * S.gap;
+    const all = card.w.map((_, i) => i);
+    let size = S.size, m = measure(size), pages;
+    while (span(m, size, all) > S.maxW && size > S.min) { size -= 2; m = measure(size); }
+    if (span(m, size, all) <= S.maxW) pages = [all];
+    else {
+      /* صفحات متوازنة: أقل عدد صفحات، والكلمات موزّعة بالعرض */
+      size = S.pageSize; m = measure(size);
+      for (let k = 2; k <= all.length; k++) {
+        const target = span(m, size, all) / k; pages = [[]]; let acc = 0;
+        all.forEach(i => { const cur = pages[pages.length - 1]; const add = m[i].w + (cur.length ? size * S.gap : 0);
+          if (cur.length && acc + add / 2 > target && pages.length < k) { pages.push([i]); acc = m[i].w; } else { cur.push(i); acc += add; } });
+        let sz = size, mm = m;
+        while (pages.some(p => span(mm, sz, p) > S.maxW) && sz > S.pageMin) { sz -= 2; mm = measure(sz); }
+        if (!pages.some(p => span(mm, sz, p) > S.maxW)) { size = sz; m = mm; break; }
+      }
     }
-    const lineH = size * 1.42;
-    const widths = lines.map(l => l.reduce((a, i) => a + m[i].w, 0) + (l.length - 1) * size * CAP.gap);
-    card._lay = { size, m, lines, lineH, widths, boxW: Math.max(...widths) + CAP.padX * 2, boxH: lines.length * lineH + CAP.padY * 2 };
+    const widths = pages.map(p => span(m, size, p));
+    const starts = pages.map((p, k) => k === 0 ? card.s : card.w[p[0]].s - .02);
+    card._lay = { size, m, pages, widths, starts, S };
     return card._lay;
   }
 
   function drawCaption(t) {
-    const style = THEME_RAW.capStyle || 'card';
+    const style = capStyle();
     /* الكروت المتلاصقة (فاصل أقل من BRIDGE) تتبدّل بدون رمشة: الكرت يقعد لين يبدأ اللي بعده */
     const BRIDGE = .2, cs = caps.cards;
     const i = cs.findIndex((c, k) => t >= c.s && t < (cs[k + 1] && cs[k + 1].s - c.e < BRIDGE ? cs[k + 1].s : c.e));
     if (i < 0) return;
     const card = cs[i]; if (card.nocap || !card.w.length) return;
-    const L = layoutCard(card);
+    const L = layoutCard(card), S = L.S;
+    let pg = 0; L.starts.forEach((s0, k) => { if (t >= s0) pg = k; });
+    const ids = L.pages[pg], pw = L.widths[pg], pStart = L.starts[pg];
+    const lastPage = pg === L.pages.length - 1;
     const prev = cs[i - 1], next = cs[i + 1];
-    const joinIn = prev && !prev.nocap && card.s - prev.e < BRIDGE;
-    const joinOut = next && !next.nocap && next.s - card.e < BRIDGE;
-    const kin = joinIn ? 1 : outCubic(prog(t, card.s, card.s + .18));
+    const joinIn = pg > 0 || (prev && !prev.nocap && card.s - prev.e < BRIDGE);
+    const joinOut = !lastPage || (next && !next.nocap && next.s - card.e < BRIDGE);
+    const kin = joinIn ? 1 : outCubic(prog(t, pStart, pStart + .18));
     const kout = joinOut ? 0 : prog(t, card.e - .12, card.e);
     const a = kin * (1 - kout);
     if (a <= 0) return;
-    const bottom = THEME_RAW.capBottom || 1460;
-    const cx = W / 2, cy = bottom - L.boxH / 2 + (1 - kin) * 22;
-    const sc = (joinIn ? .985 : .955) + (joinIn ? .015 : .045) * outBack(Math.min(1, prog(t, card.s, card.s + (joinIn ? .14 : .22))));
+
+    const bottom = THEME_RAW.capBottom || (style === 'card' ? 1460 : 668);
+    const lineH = L.size * (style === 'card' ? 1.42 : 1.3);
+    const boxW = pw + S.padX * 2, boxH = lineH + S.padY * 2;
+    const cx = W / 2, cy = bottom - boxH / 2 + (1 - kin) * (style === 'card' ? 22 : 14);
+    const sc = style === 'card'
+      ? (joinIn ? .985 : .955) + (joinIn ? .015 : .045) * outBack(Math.min(1, prog(t, pStart, pStart + (joinIn ? .14 : .22))))
+      : (joinIn ? 1 : .97 + .03 * outCubic(prog(t, pStart, pStart + .18)));
 
     X.save(); X.globalAlpha = a; X.translate(cx, cy); X.scale(sc, sc); X.translate(-cx, -cy);
-    const bx = cx - L.boxW / 2, by = cy - L.boxH / 2;
     if (style === 'card') {
+      const bx = cx - boxW / 2, by = cy - boxH / 2;
       X.shadowColor = 'rgba(0,0,0,.28)'; X.shadowBlur = 34; X.shadowOffsetY = 12;
-      X.fillStyle = rgba(THEME_RAW.cream || BG, .97); rr(bx, by, L.boxW, L.boxH, CAP.radius); X.fill();
+      X.fillStyle = rgba(THEME_RAW.cream || BG, .97); rr(bx, by, boxW, boxH, 18); X.fill();
       X.shadowColor = 'transparent';
-      X.fillStyle = ACC; rr(bx + L.boxW - 13, by + 14, 8, L.boxH - 28, 4); X.fill();
+      X.fillStyle = ACC; rr(bx + boxW - 13, by + 14, 8, boxH - 28, 4); X.fill();
     }
-    const ink = style === 'card' ? (THEME_RAW.ink || INK) : '#FFFFFF';
-    L.lines.forEach((line, li) => {
-      let x = cx + L.widths[li] / 2;                      // نبدأ من اليمين (RTL)
-      const y = by + CAP.padY + L.lineH * (li + .5) + L.size * .05;
-      line.forEach((wi, k) => {
-        const word = card.w[wi], mw = L.m[wi];
-        const said = t >= word.s, now = t >= word.s && t < word.e;
-        const wx = x - mw.w / 2;
+
+    /* مواقع الكلمات من اليمين لليسار */
+    const y = cy + L.size * (style === 'card' ? .05 : .04);
+    let x = cx + pw / 2; const pos = [];
+    ids.forEach((wi, k) => { const mw = L.m[wi]; pos.push(x - mw.w / 2); x -= mw.w + (k < ids.length - 1 ? L.size * S.gap : 0); });
+    const put = (wi, wx, fn) => { const mw = L.m[wi]; X.font = mw.f.font; X.direction = mw.f.dir; X.textAlign = 'center'; X.textBaseline = 'middle'; fn(card.w[wi].t, wx, mw); };
+    const popScale = word => word.hot && t >= word.s ? 1 + .12 * (1 - outCubic(prog(t, word.s, word.s + .22))) : 1;
+
+    if (style === 'card') {
+      const ink = THEME_RAW.ink || INK;
+      ids.forEach((wi, k) => {
+        const word = card.w[wi], mw = L.m[wi], wx = pos[k];
+        const said = t >= word.s, now = said && t < word.e;
         if (word.hot && said) {
           const kh = outBack(prog(t, word.s, word.s + .16));
           const hw = mw.w * (.6 + .4 * kh), hh = L.size * 1.18 * (.7 + .3 * kh);
           X.save(); X.globalAlpha *= clamp01(kh * 1.5); X.fillStyle = ACC;
           X.translate(wx, y - L.size * .05); X.rotate(-.02); rr(-hw / 2, -hh / 2, hw, hh, L.size * .22); X.fill(); X.restore();
         }
-        X.font = mw.f.font; X.direction = mw.f.dir; X.textAlign = 'center'; X.textBaseline = 'middle';
-        let col = ink, al = said ? 1 : .62;
-        if (word.hot && said) col = ON_ACC;
-        else if (now) col = ACC;
-        if (style !== 'card') { X.lineJoin = 'round'; X.lineWidth = L.size * .16; X.strokeStyle = 'rgba(0,0,0,.85)'; X.globalAlpha = a * al; X.strokeText(word.t, wx, y); }
-        X.globalAlpha = a * al; X.fillStyle = col;
-        if (now && !word.hot) { X.save(); X.translate(wx, y); const s = 1 + .06 * (1 - prog(t, word.s, word.s + .2)); X.scale(s, s); X.fillText(word.t, 0, 0); X.restore(); }
-        else X.fillText(word.t, wx, y);
-        x -= mw.w + (k < line.length - 1 ? L.size * CAP.gap : 0);
+        put(wi, wx, (s) => {
+          X.globalAlpha = a * (said ? 1 : .62);
+          X.fillStyle = word.hot && said ? ON_ACC : now ? ACC : ink;
+          const k2 = now && !word.hot ? 1 + .06 * (1 - prog(t, word.s, word.s + .2)) : 1;
+          X.save(); X.translate(wx, y); X.scale(k2, k2); X.fillText(s, 0, 0); X.restore();
+        });
       });
-    });
+    } else {
+      const edge = rgba(THEME_RAW.tealDeep || INK, .94);
+      /* المرور الأول: الإطار والظل · الثاني: التعبئة — باش إطار كلمة ما يغطيش كلمة جنبها */
+      ids.forEach((wi, k) => { const word = card.w[wi]; put(wi, pos[k], (s) => {
+        const k2 = popScale(word); X.save(); X.translate(pos[k], y); X.scale(k2, k2);
+        X.shadowColor = 'rgba(0,0,0,.55)'; X.shadowBlur = L.size * .28; X.shadowOffsetY = L.size * .08;
+        X.lineJoin = 'round'; X.lineWidth = L.size * .17; X.strokeStyle = edge; X.strokeText(s, 0, 0); X.restore(); }); });
+      ids.forEach((wi, k) => { const word = card.w[wi]; put(wi, pos[k], (s) => {
+        const k2 = popScale(word); X.save(); X.translate(pos[k], y); X.scale(k2, k2);
+        X.fillStyle = word.hot && t >= word.s ? ACC : '#FFFFFF'; X.fillText(s, 0, 0); X.restore(); }); });
+    }
     X.restore();
   }
 
