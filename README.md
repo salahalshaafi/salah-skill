@@ -21,6 +21,5 @@
 
 يحتاج Claude بإمكانية تشغيل الكود (Python وNode وffmpeg).
 
-## الشكر والرخص
-- مهارة صلاح: صلاح الشعافي (Get Beyond) — رخصة MIT.
-- محرّك المونتاج: ماجد الزعابي — [majedphotos/video-ad-editor](https://github.com/majedphotos/video-ad-editor)، رخصة MIT.
+## الرخصة
+MIT — صلاح الشعافي (Get Beyond). رخص المكوّنات المفتوحة المصدر المستعملة في ملف [`NOTICE`](plugins/salah-skill/NOTICE).
