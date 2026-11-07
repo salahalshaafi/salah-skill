@@ -11,7 +11,7 @@
 #   bash run.sh encode             ← صوت نظيف + مؤثرات + الغلاف أول فريم + ‎-14 LUFS + srt
 set -e
 KIT="$(cd "$(dirname "$0")" && pwd)"
-GB_HOME="${GB_HOME:-$HOME}"; WORK="${WORK:-$GB_HOME/gb-video/work}"
+export GB_HOME="${GB_HOME:-$HOME}"; WORK="${WORK:-$GB_HOME/gb-video/work}"
 ENG=$KIT/engine   # محرّك مهارة صلاح: الرسم والمؤثرات وضبط الصوت والترجمة
 M=$GB_HOME/models; T=$GB_HOME/gbtools; FONTS=$GB_HOME/fonts
 GF=https://raw.githubusercontent.com/google/fonts/main/ofl
