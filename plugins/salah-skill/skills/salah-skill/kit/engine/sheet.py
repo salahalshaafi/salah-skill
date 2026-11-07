@@ -1,6 +1,6 @@
 # مهارة صلاح — لوحة معاينة: python3 sheet.py <work> [out.jpg] [ثواني…]
 # تجمع فريمات preview/ في شبكة وحدة مع الوقت تحت كل فريم.
-# Copyright (c) 2026 Salah Alshaafi — Get Beyond. MIT License.
+# Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 import sys, os, glob
 from PIL import Image, ImageDraw, ImageFont
 

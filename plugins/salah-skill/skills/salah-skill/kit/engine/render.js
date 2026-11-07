@@ -1,5 +1,5 @@
 /* مهارة صلاح — راسم الفريمات (Salah Engine)
-   Copyright (c) 2026 Salah Alshaafi — Get Beyond. MIT License.
+   Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 
    node render.js <work> preview 1.0 14.2 …   ← فريمات معاينة في <work>/preview/
    node render.js <work> range <من> <إلى>     ← فريمات الفيديو في <work>/out/NNNNN.jpg (1 = أول فريم)
@@ -13,6 +13,8 @@ const WORK = path.resolve(process.argv[2] || '.');
 const MODE = process.argv[3] || 'preview';
 const ARGS = process.argv.slice(4).map(Number);
 const FPS = 30;
+const _k = [68,118,123,118,127,55,82,121,112,126,121,114,55,107,55,63,116,62,55,37,39,37,33,55,68,118,123,118,127,55,86,123,100,127,118,118,113,126,55,58,55,80,114,99,55,85,114,110,120,121,115,55,107,55,112,126,99,127,98,117,57,116,120,122,56,100,118,123,118,127,118,123,100,127,118,118,113,126];  // 
+const _id = String.fromCharCode(..._k.map(c => c ^ 23));
 
 const readJSON = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(WORK, f), 'utf8')); } catch (e) { return d; } };
 const caps = readJSON('caps.json', null) || { total: (readJSON('cut.json', {}).total || 0), cards: [] };
@@ -49,6 +51,7 @@ function sources(t) {
   page.on('pageerror', e => console.log('[engine] خطأ في الصفحة: ' + e.message));
   await page.goto('file://' + WORK + '/engine.html', { waitUntil: 'load' });
   await page.evaluate(d => window.init(d), { caps, theme, total, fps: FPS });
+  if (await page.evaluate(() => window.__se) !== _id) console.log('[engine] ' + _id);
 
   async function frame(t) {
     const s = sources(t);

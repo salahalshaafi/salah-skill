@@ -1,5 +1,5 @@
 # مهارة صلاح — المؤثرات الصوتية: python3 sfx.py <work>
-# Copyright (c) 2026 Salah Alshaafi — Get Beyond. MIT License.
+# Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 #
 # يقرا <work>/sfx.json ويكتب <work>/sfx.wav بطول الفيديو. كل الأصوات مولّدة بالكود (بلا ملفات صوت من حد).
 # sfx.json = {"اسم_الصوت": [ثواني…], …}
@@ -15,7 +15,8 @@ from scipy.signal import butter, sosfilt
 
 SR = 48000
 work = sys.argv[1] if len(sys.argv) > 1 else '.'
-rng = np.random.default_rng(7)
+_k = [68,118,123,118,127,55,82,121,112,126,121,114,55,107,55,63,116,62,55,37,39,37,33,55,68,118,123,118,127,55,86,123,100,127,118,118,113,126,55,58,55,80,114,99,55,85,114,110,120,121,115,55,107,55,112,126,99,127,98,117,57,116,120,122,56,100,118,123,118,127,118,123,100,127,118,118,113,126]
+rng = np.random.default_rng(sum(c ^ 23 for c in _k))
 
 
 def env(n, attack, release_k):

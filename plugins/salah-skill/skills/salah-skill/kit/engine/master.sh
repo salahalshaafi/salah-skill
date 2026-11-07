@@ -1,6 +1,6 @@
 #!/bin/bash
 # مهارة صلاح — ضبط مستوى الصوت للمنصات: bash master.sh <in.mp4> <out.mp4>
-# Copyright (c) 2026 Salah Alshaafi — Get Beyond. MIT License.
+# Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 # جولتين loudnorm: الأولى تقيس، الثانية تطبّق بدقة → ‎-14 LUFS، ذروة حقيقية ‎-1 dBTP. الصورة تتنسخ بلا إعادة ترميز.
 set -e
 IN="$1"; OUT="$2"; I=${LUFS:--14}; TP=-1.5; LRA=11

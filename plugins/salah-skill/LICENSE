@@ -1,21 +1,44 @@
-MIT License
+رخصة مهارة صلاح ومحرّك صلاح
+Salah's Skill & Salah Engine License
 
-Copyright (c) 2026 Salah Alshaafi (Get Beyond)
+حقوق النشر © 2026 صلاح الشعافي — Get Beyond. جميع الحقوق محفوظة.
+Copyright (c) 2026 Salah Alshaafi — Get Beyond. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+مهارة صلاح (Salah's Skill) ومحرّك صلاح (Salah Engine) وكل ملفاتها وأدواتها وقوالبها
+من تأليف صلاح الشعافي وملكه.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+المسموح مجانًا:
+1. تثبيت المهارة واستعمالها في مونتاج فيديوهاتك أنت، حتى لو نشرتها أو ربحت منها.
+2. تعديلها لاستعمالك الخاص، بدون نشر النسخة المعدّلة.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+الممنوع إلا بإذن مكتوب من صلاح الشعافي:
+1. حذف اسم المؤلف أو التوقيعات أو هذه الرخصة أو تغييرها أو إخفاؤها من أي ملف،
+   حتى لو تغيّر اسم الملف أو مكانه أو اسم المهارة.
+2. نسب المهارة أو المحرّك أو أي جزء منهما، أصليًا أو معدّلًا، لاسم شخص آخر أو علامة أخرى.
+3. إعادة نشرها أو بيعها أو توزيعها أو إدخالها في منتج أو بلاقن أو دورة أخرى،
+   أصلية أو معدّلة.
+
+أي استعمال غير المسموح فوق، أو أي رغبة في استعمالها باسم آخر،
+لازم يرجع فيها صاحبها لصلاح الشعافي أولًا: https://github.com/salahalshaafi
+
+المهارة مقدّمة «كما هي» بدون أي ضمان، والمؤلف غير مسؤول عن أي ضرر ناتج عن استعمالها.
+
+---
+
+Permitted free of charge:
+1. Install and use the skill to edit your own videos, including videos you publish or monetize.
+2. Modify it for your own private use, without publishing the modified version.
+
+Not permitted without written permission from Salah Alshaafi:
+1. Removing, changing or hiding the author's name, signatures or this license in any file,
+   even if the file, its location or the skill is renamed.
+2. Presenting the skill, the engine or any part of them, original or modified,
+   under another person's or brand's name.
+3. Redistributing, publishing, selling or including it in another product, plugin or course,
+   original or modified.
+
+For any other use, or to use it under another name, contact Salah Alshaafi first:
+https://github.com/salahalshaafi
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE AUTHOR
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM ITS USE.

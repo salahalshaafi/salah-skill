@@ -1,5 +1,5 @@
 /* مهارة صلاح — محرّك المونتاج (Salah Engine)
-   Copyright (c) 2026 Salah Alshaafi — Get Beyond. MIT License.
+   Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
    كُتب من الصفر من مواصفات المهارة.
 
    كل فريم يترسم بهذا الترتيب:
@@ -17,6 +17,8 @@
 (function () {
   'use strict';
   const W = 1080, H = 1920;
+  const _k = [68,118,123,118,127,55,82,121,112,126,121,114,55,107,55,63,116,62,55,37,39,37,33,55,68,118,123,118,127,55,86,123,100,127,118,118,113,126,55,58,55,80,114,99,55,85,114,110,120,121,115,55,107,55,112,126,99,127,98,117,57,116,120,122,56,100,118,123,118,127,118,123,100,127,118,118,113,126];
+  Object.defineProperty(window, '__se', { value: String.fromCharCode(..._k.map(c => c ^ 23)), enumerable: false });
   const cv = document.getElementById('cv');
   const X = cv.getContext('2d');
 

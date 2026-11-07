@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# مهارة صلاح — © 2026 صلاح الشعافي (Get Beyond). جميع الحقوق محفوظة — All rights reserved (LICENSE).
 """مهارة صلاح — Build caps.json (Salah Engine format) from the corrected transcript.
 Words are timed inside each VAD speech segment, proportional to length,
 consuming only frames where the voice is active (RMS envelope)."""

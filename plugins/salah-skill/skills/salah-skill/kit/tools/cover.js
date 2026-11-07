@@ -1,3 +1,4 @@
+// مهارة صلاح — © 2026 صلاح الشعافي (Get Beyond). جميع الحقوق محفوظة — All rights reserved (LICENSE).
 // node cover.js <work>  — يرسم <work>/cover.html إلى <work>/cover.png (عدّل COVER_FRAME والعنوان داخل cover.html)
 const puppeteer = require(process.env.PUPPETEER_PATH || 'puppeteer-core'), fs = require('fs'), path = require('path');
 const W = path.resolve(process.argv[2] || '.');
