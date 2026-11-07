@@ -1,0 +1,25 @@
+{
+ "bg": "#FFF5F8",
+ "ink": "#1D1B22",
+ "acc": "#FF5C8A",
+ "clay": "#2E2B36",
+ "mut": "#6F8790",
+ "onAcc": "#FFFFFF",
+ "font": "Tajawal",
+ "capStyle": "card",
+ "grid": false,
+ "bar": false,
+ "badge": false,
+ "capBottom": 1460,
+ "teal": "#2E2B36",
+ "tealDeep": "#1D1B22",
+ "mustard": "#FF5C8A",
+ "cream": "#FFF5F8",
+ "good": "#2FBF71",
+ "bad": "#E5484D",
+ "handle": "",
+ "motion": {
+  "bounce": false
+ },
+ "palette": "rose-graphite"
+}

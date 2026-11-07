@@ -1,0 +1,62 @@
+{
+ "_note": "مهارة صلاح — لوحات خاصة بالمهارة (غير لوحات فيديوهات Get Beyond). اللون يتبدّل كل فيديو. mustard = لون التمييز، tealDeep = الغامق، teal = الوسط، cream = الفاتح، ink = الحبر.",
+ "order": [
+  "rose-graphite",
+  "mint-forest",
+  "red-black",
+  "violet-ink",
+  "mango-plum"
+ ],
+ "palettes": {
+  "rose-graphite": {
+   "label": "وردي × جرافيت",
+   "mustard": "#FF5C8A",
+   "tealDeep": "#1D1B22",
+   "teal": "#2E2B36",
+   "cream": "#FFF5F8",
+   "ink": "#1D1B22",
+   "good": "#2FBF71",
+   "bad": "#E5484D"
+  },
+  "mint-forest": {
+   "label": "نعناعي × أخضر غابة",
+   "mustard": "#3DDC97",
+   "tealDeep": "#0F2A23",
+   "teal": "#1C4237",
+   "cream": "#F2FBF7",
+   "ink": "#0F2A23",
+   "good": "#3DDC97",
+   "bad": "#FF5D5D"
+  },
+  "red-black": {
+   "label": "أحمر × أسود",
+   "mustard": "#FF3B30",
+   "tealDeep": "#111111",
+   "teal": "#262626",
+   "cream": "#FAFAFA",
+   "ink": "#111111",
+   "good": "#2FBF71",
+   "bad": "#FF3B30"
+  },
+  "violet-ink": {
+   "label": "بنفسجي × حبر",
+   "mustard": "#8B5CF6",
+   "tealDeep": "#17132B",
+   "teal": "#2A2347",
+   "cream": "#F6F4FF",
+   "ink": "#17132B",
+   "good": "#2FBF71",
+   "bad": "#FF5D5D"
+  },
+  "mango-plum": {
+   "label": "مانجو × برقوقي",
+   "mustard": "#FFB020",
+   "tealDeep": "#2B1A2F",
+   "teal": "#45284B",
+   "cream": "#FFF8EC",
+   "ink": "#2B1A2F",
+   "good": "#2FBF71",
+   "bad": "#E5484D"
+  }
+ }
+}

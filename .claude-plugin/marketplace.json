@@ -1,0 +1,11 @@
+{
+  "name": "salah-skill",
+  "owner": { "name": "Salah Alshaafi (Get Beyond)" },
+  "plugins": [
+    {
+      "name": "salah-skill",
+      "source": "./plugins/salah-skill",
+      "description": "مهارة صلاح — مونتاج ريلز عربية: كابشن بالكلمة بلهجتك، موشن غرافيك، لحظات عمق، لقطات أدوات حقيقية، غلاف وكابشنات منصات."
+    }
+  ]
+}

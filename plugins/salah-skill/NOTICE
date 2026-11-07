@@ -1,0 +1,3 @@
+This plugin builds on "video-ad-editor" by Majed Alzaabi (https://github.com/majedphotos/video-ad-editor),
+Copyright (c) 2026 Majed Alzaabi, licensed under the MIT License. The engine is downloaded at setup
+(commit 886cae6) and keeps its own LICENSE. skills/salah-skill/kit/kit/compose.html is a modified version of that engine's compose file.

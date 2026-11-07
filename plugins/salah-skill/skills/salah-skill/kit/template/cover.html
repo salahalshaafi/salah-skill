@@ -1,0 +1,28 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
+<style>@font-face{font-family:'Tajawal';src:url('Tajawal-Black.ttf');font-weight:900;}@font-face{font-family:'Inter';src:url('Inter-VF.ttf');font-weight:100 900;}
+html,body{margin:0;background:#000}canvas{display:block}</style></head><body>
+<canvas id="cv" width="1080" height="1920"></canvas>
+<script>
+const X = document.getElementById('cv').getContext('2d');
+const TH = { deep: '#1D1B22', mus: '#FF5C8A', cream: '#FFF5F8' };  /* خذها من theme.json */
+const img = new Image(); img.src = 'vfr/00001.jpg';  /* فريم فمه مسكّر ويطالع الكاميرا: ث×30+1 */;
+window.render = async () => {
+  await Promise.all([document.fonts.load('900 170px Tajawal', 'العنوان السطر الثاني'), document.fonts.load('800 150px Inter', 'AI'), new Promise(r => img.complete ? r() : img.onload = r)]);
+  const s = 1.1; X.save(); X.translate(540, 1350); X.scale(s, s); X.translate(-540, -1250); X.drawImage(img, 0, 0, 1080, 1920); X.restore();
+  const g = X.createLinearGradient(0, 0, 0, 900); g.addColorStop(0, 'rgba(20,33,61,.92)'); g.addColorStop(.7, 'rgba(20,33,61,.55)'); g.addColorStop(1, 'rgba(20,33,61,0)');
+  X.fillStyle = g; X.fillRect(0, 0, 1080, 900);
+  const txt = (s, x, y, size, color, f, dir, w) => { X.font = (w || 900) + ' ' + size + 'px ' + f; X.textAlign = 'center'; X.textBaseline = 'middle'; X.direction = dir;
+    X.lineJoin = 'round'; X.lineWidth = size * .14; X.strokeStyle = 'rgba(10,32,40,.95)'; X.strokeText(s, x, y); X.fillStyle = color; X.fillText(s, x, y); };
+  /* سطر 1: السطر الأول: كلمة عربية + كلمة إنقليزية (أو احذف الإنقليزي) */
+  X.font = '900 170px Tajawal'; const w1 = X.measureText('العنوان').width; X.font = '800 150px Inter'; const w2 = X.measureText('AI').width; const gap = 40, tot = w1 + w2 + gap, x0 = 540 + tot / 2;
+  txt('العنوان', x0 - w1 / 2, 520, 170, TH.cream, 'Tajawal', 'rtl');
+  txt('AI', x0 - w1 - gap - w2 / 2, 528, 150, TH.cream, 'Inter', 'ltr', 800);
+  /* سطر 2: السطر الثاني على كبسولة */
+  X.font = '900 132px Tajawal'; const w3 = X.measureText('السطر الثاني').width + 110;
+  X.shadowColor = 'rgba(0,0,0,.4)'; X.shadowBlur = 40; X.shadowOffsetY = 14; X.fillStyle = TH.mus;
+  const rr = (x, y, w, h, r) => { X.beginPath(); X.moveTo(x + r, y); X.arcTo(x + w, y, x + w, y + h, r); X.arcTo(x + w, y + h, x, y + h, r); X.arcTo(x, y + h, x, y, r); X.arcTo(x, y, x + w, y, r); X.closePath(); };
+  X.save(); X.translate(540, 712); X.rotate(-.035); rr(-w3 / 2, -95, w3, 215, 105); X.fill(); X.shadowColor = 'transparent';
+  X.font = '900 132px Tajawal'; X.textAlign = 'center'; X.textBaseline = 'middle'; X.direction = 'rtl'; X.fillStyle = TH.deep; X.fillText('السطر الثاني', 0, 8); X.restore();
+  return document.getElementById('cv').toDataURL('image/png');
+};
+</script></body></html>
