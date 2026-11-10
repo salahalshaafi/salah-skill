@@ -1,7 +1,10 @@
 # مهارة صلاح — المؤثرات الصوتية: python3 sfx.py <work>
 # Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 #
-# يقرا <work>/sfx.json ويكتب <work>/sfx.wav بطول الفيديو. كل الأصوات مولّدة بالكود (بلا ملفات صوت من حد).
+# يقرا <work>/sfx.json ويكتب <work>/sfx.wav بطول الفيديو.
+# مصدر الأصوات: أصوات حقيقية مسجّلة (مكتبة Kenney، رخصة CC0 = ملك عام) لو تحمّلت بـ run.sh setup،
+# وإلا الأصوات المولّدة بالكود. "_bank": "gen" في sfx.json يرجّع المولّدة بس. الضربة (thud) دايمًا مولّدة.
+# كل مرة الصوت يتكرر ياخذ نسخة مختلفة من نفس النوع، باش ما يبانش مكرر.
 # sfx.json = {"اسم_الصوت": [ثواني…], …}
 #   whoosh_up  هوا طالع (دخول كرت/مشهد)      whoosh_down  هوا نازل (خروج)
 #   thud       ضربة غامقة (ستيكر/ختم)        tap          نقرة خفيفة
@@ -80,7 +83,43 @@ def make(name):
     return None
 
 
+# ── الأصوات الحقيقية (CC0) ─────────────────────────────────────────
+GB = os.path.expanduser(os.environ.get('GB_HOME', '~'))
+BANK_DIR = os.environ.get('SFX_BANK', os.path.join(GB, 'sfx-cc0'))
+REAL = {   # اسم الصوت ← ملفات Kenney المناسبة (اخترناها بقياس طولها وحركة نغمتها)
+    'whoosh_up':   ['maximize_001', 'maximize_004', 'open_002', 'open_003'],
+    'whoosh_down': ['minimize_001', 'minimize_002', 'minimize_004', 'close_002', 'close_003'],
+    'shimmer':     ['confirmation_003', 'glass_004'],
+    'ding':        ['confirmation_001', 'confirmation_002', 'confirmation_004', 'glass_001'],
+    'pop':         ['drop_002', 'drop_003', 'drop_004', 'pluck_001', 'pluck_002'],
+    'tap':         ['select_001', 'select_002', 'tick_004'],
+    'click':       ['click_002', 'click_003', 'click_005'],
+}
+PEAK = {'whoosh_up': -21, 'whoosh_down': -21, 'shimmer': -24, 'ding': -23, 'pop': -23, 'tap': -24, 'click': -25}
+_files = {}
+if os.path.isdir(BANK_DIR):
+    for root, _, fs in os.walk(BANK_DIR):
+        for f in fs:
+            if f.endswith('.wav') or f.endswith('.ogg'): _files.setdefault(os.path.splitext(f)[0], os.path.join(root, f))
+
+
+def real(name):
+    out = []
+    for stem in REAL.get(name, []):
+        p = _files.get(stem)
+        if not p: continue
+        import soundfile as sf
+        from scipy.signal import resample_poly
+        x, sr = sf.read(p, dtype='float32')
+        if x.ndim > 1: x = x.mean(1)
+        if sr != SR: x = resample_poly(x, SR, sr)
+        x = x * np.minimum(1, np.linspace(0, 1, len(x)) * 400)       # بلا طقة في البداية
+        out.append(norm(x.astype(np.float64), PEAK[name]))
+    return out
+
+
 cfg = json.load(open(os.path.join(work, 'sfx.json')))
+USE_REAL = cfg.get('_bank', 'real') != 'gen' and bool(_files)
 caps = json.load(open(os.path.join(work, 'caps.json')))
 total = caps.get('total') or json.load(open(os.path.join(work, 'cut.json')))['total']
 track = np.zeros(int((total + 1.5) * SR))
@@ -90,11 +129,16 @@ for name, times in cfg.items():
         if not times: continue
         name, times = 'ding', [times] if isinstance(times, (int, float)) else times
     if not isinstance(times, list): continue
-    if name not in bank: bank[name] = make(name)
-    snd = bank[name]
-    if snd is None:
+    if name not in bank:
+        variants = real(name) if USE_REAL else []
+        if not variants:
+            g = make(name); variants = [g] if g is not None else []
+        bank[name] = variants
+    variants = bank[name]
+    if not variants:
         print(f'[sfx] صوت مش معروف: {name} — تجاهلته'); continue
-    for t in times:
+    for k, t in enumerate(times):
+        snd = variants[k % len(variants)]                          # نسخة مختلفة كل مرة
         i = int(max(0, t) * SR)
         if i >= len(track): continue
         seg = snd[:len(track) - i]; track[i:i + len(seg)] += seg; count += 1
@@ -103,4 +147,4 @@ if peak > 10 ** (-18 / 20): track *= 10 ** (-18 / 20) / peak   # تداخل أص
 track = track[:int(total * SR)]
 import soundfile as sf
 sf.write(os.path.join(work, 'sfx.wav'), np.stack([track, track], 1).astype(np.float32), SR)
-print(f'🔊 {count} مؤثر · ذروة {20 * np.log10(np.abs(track).max() + 1e-9):.1f} dBFS → sfx.wav')
+print(f'🔊 {count} مؤثر ({"حقيقية CC0" if USE_REAL else "مولّدة"}) · ذروة {20 * np.log10(np.abs(track).max() + 1e-9):.1f} dBFS → sfx.wav')

@@ -5,7 +5,8 @@
 #   bash run.sh init <video.mp4>   ← مجلد شغل + فريمات + صوت
 #   bash run.sh palette [اسم]     ← لون الفيديو: يتبدّل تلقائياً عن آخر فيديو (الأسلوب نفسه)
 #   bash run.sh transcribe         ← تفريغ بقطع 10 و15 ث (اقرأ t10.log و t15.log وصحّح بنفسك)
-#   bash run.sh masks "1-100,2290-2500"   ← قصّ الشخص للحظات العمق (أرقام فريمات)
+#   bash run.sh align              ← بعد build_caps.py: الكلمات بعد السكتات على حافة الصوت بالضبط
+#   bash run.sh masks "1-100,2290-2500"   ← قصّ الشخص للحظات العمق، بحواف ناعمة بلا هالة (أرقام فريمات)
 #   bash run.sh preview 1.0 14.2 …        ← معاينة + sheet.jpg
 #   bash run.sh render             ← رسم كل الفريمات (نصفين بالتوازي)
 #   bash run.sh encode             ← صوت نظيف + مؤثرات + الغلاف أول فريم + ‎-14 LUFS + srt
@@ -25,6 +26,8 @@ setup)
   mkdir -p $FONTS; for w in Regular Medium Bold ExtraBold Black; do [ -s $FONTS/Tajawal-$w.ttf ] || curl -sfL -o $FONTS/Tajawal-$w.ttf $GF/tajawal/Tajawal-$w.ttf; done
   [ -s $FONTS/Inter-VF.ttf ] || curl -sfL -o $FONTS/Inter-VF.ttf "$GF/inter/Inter%5Bopsz,wght%5D.ttf"
   [ -s $FONTS/Cairo-VF.ttf ] || curl -sfL -o $FONTS/Cairo-VF.ttf "$GF/cairo/Cairo%5Bslnt,wght%5D.ttf"
+  # أصوات حقيقية (Kenney، رخصة CC0 = ملك عام) — تتحمّل هني، مش موزّعة مع المهارة. لو فشلت، المؤثرات المولّدة تشتغل
+  mkdir -p $GB_HOME/sfx-cc0; for r in kenney-interface-sounds kenney-ui-audio; do [ -d $GB_HOME/sfx-cc0/$r ] || git clone -q --depth 1 https://github.com/Calinou/$r.git $GB_HOME/sfx-cc0/$r 2>/dev/null || echo "⚠️ ما تحمّلتش $r — المؤثرات المولّدة بتشتغل"; done
   # huggingface محجوب بالسحابة — الموديلات من GitHub releases
   [ -d $M/sherpa-onnx-whisper-turbo ] || (cd $M && curl -sL https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-turbo.tar.bz2 | tar xj)
   [ -f $M/silero_vad.onnx ] || curl -sL -o $M/silero_vad.onnx https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx
@@ -57,6 +60,8 @@ PY
 transcribe)
   cd $WORK; python3 $KIT/tools/transcribe2.py audio16k.wav c10.json 10 > t10.log 2>&1; python3 $KIT/tools/transcribe2.py audio16k.wav c15.json 15 > t15.log 2>&1
   cat t10.log; echo ====; cat t15.log; echo "مقاطع الكلام (VAD): c10_vad.json — جمل غامضة: python3 $KIT/tools/win.py audio16k.wav 39.7-42.2 …";;
+align)   # بعد build_caps.py: بداية كل كلمة بعد سكتة على حافة الصوت بالضبط
+  cd $WORK; python3 $ENG/align.py .;;
 masks)
   cd $WORK; python3 $KIT/tools/u2mask.py vfr bt/person cut "$2" > mask.log 2>&1; ls bt/person | wc -l;;
 preview)
