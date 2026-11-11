@@ -1,16 +1,15 @@
 {
   "name": "salah-skill",
   "version": "2.1.0",
-  "description": "مهارة صلاح (Salah's Skill) — مونتاج ريلز عربية من تصميم صلاح الشعافي (Get Beyond): كابشن بالكلمة بلهجتك، موشن غرافيك، لحظات عمق، لقطات أدوات حقيقية، غلاف وكابشنات منصات.",
+  "description": "مهارة صلاح (Salah's Skill) — مونتاج ريلز عربية من تصميم صلاح الشعافي: كابشن بالكلمة بلهجتك، موشن غرافيك، لحظات عمق، لقطات أدوات حقيقية، غلاف وكابشنات منصات.",
   "author": {
-    "name": "Salah Alshaafi (Get Beyond)",
+    "name": "Salah Alshaafi",
     "url": "https://github.com/salahalshaafi"
   },
   "license": "SEE LICENSE IN LICENSE",
   "keywords": [
     "مهارة صلاح",
     "salah",
-    "get-beyond",
     "video",
     "reels",
     "arabic",

@@ -1,5 +1,5 @@
 # مهارة صلاح — ملف الترجمة: python3 srt.py <work> <اسم>  → <work>/<اسم>.srt
-# Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
+# Copyright (c) 2026 Salah Alshaafi. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 # كل كرت كابشن = سطر ترجمة بنفس توقيته (النص بلهجة المتكلم، بلا علامات التمييز).
 import sys, os, json
 

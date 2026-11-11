@@ -1,6 +1,6 @@
 {
   "name": "salah-skill",
-  "owner": { "name": "Salah Alshaafi (Get Beyond)" },
+  "owner": { "name": "Salah Alshaafi" },
   "plugins": [
     {
       "name": "salah-skill",

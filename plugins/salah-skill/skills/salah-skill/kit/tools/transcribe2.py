@@ -1,4 +1,4 @@
-# مهارة صلاح — © 2026 صلاح الشعافي (Get Beyond). جميع الحقوق محفوظة — All rights reserved (LICENSE).
+# مهارة صلاح — © 2026 صلاح الشعافي. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 import os
 import sys, json, numpy as np, soundfile as sf, sherpa_onnx
 M = os.path.expanduser(os.environ.get('GB_HOME','~')) + '/models/sherpa-onnx-whisper-turbo/'

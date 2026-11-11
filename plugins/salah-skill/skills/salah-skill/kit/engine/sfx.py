@@ -1,5 +1,5 @@
 # مهارة صلاح — المؤثرات الصوتية: python3 sfx.py <work>
-# Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
+# Copyright (c) 2026 Salah Alshaafi. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 #
 # يقرا <work>/sfx.json ويكتب <work>/sfx.wav بطول الفيديو.
 # مصدر الأصوات: أصوات حقيقية مسجّلة (مكتبة Kenney، رخصة CC0 = ملك عام) لو تحمّلت بـ run.sh setup،

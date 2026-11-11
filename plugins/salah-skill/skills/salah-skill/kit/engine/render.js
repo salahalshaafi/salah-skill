@@ -1,5 +1,5 @@
 /* مهارة صلاح — راسم الفريمات (Salah Engine)
-   Copyright (c) 2026 Salah Alshaafi — Get Beyond. جميع الحقوق محفوظة — All rights reserved (LICENSE).
+   Copyright (c) 2026 Salah Alshaafi. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 
    node render.js <work> preview 1.0 14.2 …   ← فريمات معاينة في <work>/preview/
    node render.js <work> range <من> <إلى>     ← فريمات الفيديو في <work>/out/NNNNN.jpg (1 = أول فريم)

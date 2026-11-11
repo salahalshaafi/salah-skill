@@ -1,4 +1,4 @@
-# مهارة صلاح — © 2026 صلاح الشعافي (Get Beyond). جميع الحقوق محفوظة — All rights reserved (LICENSE).
+# مهارة صلاح — © 2026 صلاح الشعافي. جميع الحقوق محفوظة — All rights reserved (LICENSE).
 """u2net_human_seg person masks.
 usage: u2mask.py <vfr_dir> <out_dir> <mode> <frame indices spec>
   mode=stats : print head-top y (in 1920 space) per frame, no files
